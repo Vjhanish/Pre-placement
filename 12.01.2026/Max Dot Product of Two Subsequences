@@ -1,0 +1,39 @@
+class Solution {
+    public int maxDotProduct(int[] nums1, int[] nums2) {
+        int m = nums1.length;
+        int n = nums2.length;
+        
+        // dp[i][j] stores the max dot product using subsets of nums1[0...i] and nums2[0...j]
+        int[][] dp = new int[m][n];
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // Calculate the product of the current pair
+                int product = nums1[i] * nums2[j];
+                
+                // Initialize current state with the product alone
+                dp[i][j] = product;
+
+                // If possible, add to the max product of the previous indices
+                if (i > 0 && j > 0) {
+                    // We take max(product, product + prev) effectively handling
+                    // cases where the previous result was negative (restart subsequence)
+                    dp[i][j] = Math.max(dp[i][j], product + dp[i-1][j-1]);
+                }
+
+                // Check if we get a better result by excluding the current element from nums1
+                if (i > 0) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i-1][j]);
+                }
+
+                // Check if we get a better result by excluding the current element from nums2
+                if (j > 0) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i][j-1]);
+                }
+            }
+        }
+
+        // The bottom-right cell contains the maximum dot product for the full arrays
+        return dp[m - 1][n - 1];
+    }
+}
