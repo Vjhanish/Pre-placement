@@ -1,0 +1,49 @@
+class Solution {
+    public String changevowel(String s){
+        StringBuilder sb = new StringBuilder();
+        for(char ch: s.toCharArray()){
+            if("aeiou".indexOf(ch)!=-1)sb.append("*");
+            else{
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+    public String[] spellchecker(String[] wordlist, String[] queries) {
+        HashSet<String> original=new HashSet<>();
+        HashMap<String,String> casemap=new HashMap<>();
+        HashMap<String,String> casechange=new HashMap<>();
+
+
+        for(String s : wordlist){
+            original.add(s);
+            String lower=s.toLowerCase();
+            casemap.putIfAbsent(lower,s);
+            casechange.putIfAbsent(changevowel(lower),s);
+
+        }
+
+        String []res= new String[queries.length];
+        for(int i=0;i<queries.length;i++){
+            String q=queries[i];
+            String lower=q.toLowerCase();
+            String qchangevowel=changevowel(lower);
+
+            if(original.contains(q)){
+                res[i]=q;
+            }
+            else if(casemap.containsKey(lower)){
+                res[i]=casemap.get(lower);
+            }
+            else if(casechange.containsKey(qchangevowel)){
+                res[i]=casechange.get(qchangevowel);
+            }
+            else{
+                res[i]="";
+            }
+        }
+        return res;
+        
+        
+    }
+}
