@@ -1,0 +1,13 @@
+class Solution {
+    public boolean doesAliceWin(String s) {
+        String a = "aeiou";
+        for (int i = 0; i < s.length(); i ++) {
+            for (char c: a.toCharArray()) {
+                if (c == s.charAt(i)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
