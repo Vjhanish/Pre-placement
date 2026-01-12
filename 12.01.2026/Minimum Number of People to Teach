@@ -1,0 +1,66 @@
+class Solution {
+    public int minimumTeachings(int n, int[][] languages, int[][] friendships) {
+        int m=languages.length; //number of people;
+        int maxlen=n;
+
+        for(int i=0;i<m;i++){
+          for(int j:languages[i]){
+            if(j>maxlen){
+                maxlen=j;
+            }
+          }
+        }
+        int actualLen=Math.max(n,maxlen);
+
+        boolean personLang[][]=new boolean[m+1][actualLen+1];
+
+        for(int i=0;i<m;i++){
+          for(int j:languages[i]){
+           if(j>=1 && j<=actualLen) personLang[i+1][j]=true;
+          }
+        }
+
+
+        boolean needTeach[]=new boolean[m+1];
+        for(int f[]:friendships){
+          int u=f[0],v=f[1];
+          if(u<1 || u>m || v<1 || v>m) continue;
+          if(!abc(personLang[u],personLang[v],actualLen)){
+              needTeach[u]=true;
+            needTeach[v]=true;
+          }
+          
+        }
+
+        boolean x=false;
+        for(boolean z:needTeach){
+          if(z){
+            x=true;
+            break;
+          }
+        }
+        if(!x)return 0;
+        
+        int temp=Integer.MAX_VALUE;
+        for(int i=1;i<=actualLen;i++){
+            int count=0;
+            for(int j=1;j<=m;j++){
+                if(needTeach[j] && !personLang[j][i]){
+                 count++;
+                }
+            }
+            temp=Math.min(temp,count);
+        }
+
+return temp;
+}
+public static boolean abc(boolean[] a,boolean[] b, int n){
+  for(int i=1;i<=n;i++){ 
+    if(a[i]&& b[i]){
+        return true;
+    }
+  
+  }
+  return false; 
+}
+}
