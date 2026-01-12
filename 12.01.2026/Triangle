@@ -1,0 +1,27 @@
+class Solution {
+  public int minimumTotal(List<List<Integer>> triangle) {
+    int rows = triangle.size();
+    for (int r = 1; r < rows; r++) {
+      for (int c = 0; c <= r; c++) {
+        int minAbove = Integer.MAX_VALUE;
+        int top, topLeft, topRight;
+        if (c == 0) {
+          top = triangle.get(r - 1).get(c);
+          minAbove = top;
+        }
+        if (c == r) {
+          topLeft = triangle.get(r - 1).get(c - 1);
+          minAbove = topLeft;
+        }
+        if (c > 0 && c < r) {
+          topLeft = triangle.get(r - 1).get(c - 1);
+          topRight = triangle.get(r - 1).get(c);
+          minAbove = Math.min(topLeft, topRight);
+        }
+        int current = triangle.get(r).get(c);
+        triangle.get(r).set(c, minAbove + current);
+      }
+    } 
+    return Collections.min(triangle.get(rows - 1));
+  }
+}
