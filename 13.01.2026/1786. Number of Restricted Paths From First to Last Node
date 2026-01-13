@@ -1,0 +1,65 @@
+class Solution {
+    public int countRestrictedPaths(int n, int[][] edges) {
+        ArrayList<int[]> graph[]=new ArrayList[n+1];
+        for(int i=1;i<=n;i++){
+            graph[i]=new ArrayList<>();
+        }
+        for(int e[]:edges){
+            graph[e[0]].add(new int[]{e[1],e[2]});
+            graph[e[1]].add(new int[]{e[0],e[2]});
+        }
+
+        int dist[]=new int[n+1];
+        dijkstra(graph,dist,n);
+
+        dp=new int[n+1];
+        Arrays.fill(dp,-1);
+
+        return helper(graph,dist,0,1,n);
+    }
+    int dp[];
+    long mod=1000000007;
+    public int helper(ArrayList<int[]> graph[],int dist[],int par,int src,int n){
+        if(src==n)
+        return 1;
+
+        if(dp[src]!=-1)
+        return dp[src];
+
+        long ans=0;
+        for(int neigh[]:graph[src]){
+            if(par!=neigh[0]&&dist[src]>dist[neigh[0]]){
+                ans=(ans+helper(graph,dist,src,neigh[0],n))%mod;
+            }
+        }
+        return dp[src]=(int)ans;
+    }
+    public void dijkstra(ArrayList<int[]> graph[],int dist[],int n){
+        PriorityQueue<int[]> pq=new PriorityQueue<>((a,b)->a[1]-b[1]);
+        Arrays.fill(dist,Integer.MAX_VALUE);
+        dist[n]=0;
+        pq.add(new int[]{n,0});
+
+        int a[];
+        while(!pq.isEmpty()){
+            a=pq.remove();
+            for(int neigh[]:graph[a[0]]){
+                if(a[1]+neigh[1]<dist[neigh[0]]){
+                    dist[neigh[0]]=a[1]+neigh[1];
+                    pq.add(new int[]{neigh[0],dist[neigh[0]]});
+                }
+            }
+        }
+        // System.out.println(Arrays.toString(dist));
+    }
+}
+
+
+
+
+
+
+
+
+
+
