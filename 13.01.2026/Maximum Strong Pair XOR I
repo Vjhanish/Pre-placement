@@ -1,0 +1,77 @@
+
+class Solution {
+    // Sliding window + bit manipulation + Trie
+    static class TrieNode{
+        TrieNode[] child = new TrieNode[2];
+        int count = 0;
+    }
+
+    TrieNode root = new TrieNode();
+
+    // O(32)
+    void insert(int num) {
+        TrieNode node = root;
+
+        for(int i=31; i>=0; i--) {
+            // which direction
+            int bit = (num >> i) & 1; // last bit
+
+            if(node.child[bit] == null) {
+                node.child[bit] = new TrieNode();
+            }
+
+            node = node.child[bit];
+            node.count++;
+        }
+    }
+
+    // O(32)
+    void remove(int num) {
+        TrieNode node = root;
+        for(int i=31; i>=0; i--) {
+            int bit = (num >> i) & 1;
+            node = node.child[bit];
+            node.count--;
+        }
+    }
+
+    int getMaxXor(int num) {
+        TrieNode node = root;
+        int ans = 0;
+
+        for(int i=31; i>=0; i--) {
+            int bit = (num >> i) & 1;
+            int want = bit ^ 1;
+
+            // if opposite want exist
+            if(node.child[want] != null && node.child[want].count > 0) {
+                ans = ans | (1 << i); // value at the ith level
+                node = node.child[want];
+            } else {
+                node = node.child[bit];
+            }
+        }
+        return ans;
+    }
+    public int maximumStrongPairXor(int[] nums) {
+        Arrays.sort(nums); // O(nlogn)
+        int maxXor = 0;
+
+        // condition x <= y <= 2x
+
+        int l = 0;
+        for(int r = 0; r<nums.length; r++) { // O(n)
+            insert(nums[r]);
+            // if condition invalidate -> can't make a pair. move & remove from trie.
+            while(nums[r] > 2L * nums[l]) {
+                remove(nums[l]);
+                l++;
+            }
+
+            // valid window [l, r] O(n)
+            maxXor = Math.max(maxXor, getMaxXor(nums[r]));
+        }
+
+        return maxXor;
+    }
+}
