@@ -1,0 +1,42 @@
+class Solution {
+    public int maximumXorProduct(long a, long b, int n) {
+        long axorx = 0;
+        long bxorx = 0;
+        int mod = 1000000007;
+
+        for(int i = 63; i >= n; i--) {
+            boolean aset = ((a >> i) & 1) == 1;
+            boolean bset = ((b >> i) & 1) == 1;
+
+            if(aset) {
+                axorx = axorx ^ (1L<<i);
+            }
+
+            if(bset) {
+                bxorx = bxorx ^ (1L<<i);
+            }
+        }
+
+        for(int i = n-1; i >= 0; i--) {
+            boolean aset = ((a >> i) & 1) == 1;
+            boolean bset = ((b >> i) & 1) == 1;
+
+            if(aset == bset) {
+                axorx = axorx ^ (1L<<i);
+                bxorx = bxorx ^ (1L<<i);
+                continue;
+            } 
+
+            if(axorx > bxorx) {
+                bxorx = bxorx ^ (1L<<i);
+            } else {
+                axorx = axorx ^ (1L<<i);
+            }
+        }
+
+        axorx = axorx % mod;
+        bxorx = bxorx % mod;
+
+        return (int)((axorx * bxorx) % mod);
+    }
+}
