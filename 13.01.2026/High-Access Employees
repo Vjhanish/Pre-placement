@@ -1,0 +1,54 @@
+class Solution {
+    public List<String> findHighAccessEmployees(List<List<String>> at) {
+        //Collections.sort(at,(List<String> a,List<String> b) -> Integer.parseInt(a.get(1)) - Integer.parseInt(b.get(1)));
+        Collections.sort(at,(a,b) -> a.get(1).compareTo(b.get(1)));
+        List<String> ans = new ArrayList<>();
+        HashMap<String,Integer> count = new HashMap<>();
+        HashMap<String,String> prevlogin = new HashMap<>();
+        HashMap<String,String> temp = new HashMap<>();
+        for(List<String> s:at){
+            if(prevlogin.containsKey(s.get(0))){
+                int x = Integer.parseInt(prevlogin.get(s.get(0)));
+                int y = Integer.parseInt(s.get(1));
+                int t = Math.abs(x-y);
+                if(t <100){
+                    count.replace(s.get(0),count.get(s.get(0)) + 1);
+                    if(count.get(s.get(0)) >= 3){
+                        if(!ans.contains(s.get(0))){
+                            ans.add(s.get(0));
+                        }
+                    }
+                    else{
+                        temp.put(s.get(0),s.get(1));
+                    }
+                }
+                else{
+                    if(temp.containsKey(s.get(0))){
+                        int X = Integer.parseInt(temp.get(s.get(0)));
+                        int T = Math.abs(X-y);
+                        if(T<=99){
+                            count.replace(s.get(0),2);
+                            prevlogin.replace(s.get(0),temp.get(s.get(0)));
+                            temp.replace(s.get(0),s.get(1));
+                        }
+                        else{
+                            temp.remove(s.get(0));
+                            count.replace(s.get(0),1);
+                            prevlogin.replace(s.get(0),s.get(1));
+                        }
+                    }
+                    else{
+                        count.replace(s.get(0),1);
+                        prevlogin.replace(s.get(0),s.get(1));
+                    }
+                }
+            }
+            else{
+                prevlogin.put(s.get(0),s.get(1));
+                count.put(s.get(0),1);
+            }
+            
+        }
+        return ans;
+    }
+}
