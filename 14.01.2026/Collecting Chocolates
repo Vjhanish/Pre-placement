@@ -1,0 +1,25 @@
+class Solution {
+    public long minCost(int[] nums, int x) {
+        int n = nums.length;
+        // Initial the min cost array for each column as the initial number
+        long[] minCost = Arrays.stream(nums).mapToLong(i -> i).toArray();
+        // final result
+        long cost = Long.MAX_VALUE;
+        for(int i=0; i<n; i++)
+        {   
+            // min cost for current row
+            long temp = 0L;
+            for(int j=0; j<n; j++)
+            {
+                // nums[(j-i+n)%n] will give you cost for current column
+               minCost[j] = Math.min(minCost[j], nums[(j-i+n)%n]);
+               temp+=minCost[j];
+            }
+            // need add 1L in the front otherwise it will overflow
+            temp += 1L*x*i ;
+            cost = Math.min(cost, temp);
+        }
+        return cost;
+    
+    }
+}
