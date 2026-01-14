@@ -1,0 +1,57 @@
+class Solution {
+  BitSet seen = new BitSet(); // to keep track of seen gene values
+  List<List<Integer>> graph = new ArrayList<>();
+  int[] nums;
+  
+  public int[] smallestMissingValueSubtree(int[] parents, int[] nums) {
+    int n = nums.length;
+    int[] ans = new int[n];
+    Arrays.fill(ans, 1);
+    
+    // find node with gene value 1
+    int nodeWithGene1 = -1;
+    for (int i = 0; i<n; ++i) {
+      if (nums[i] == 1) {
+        nodeWithGene1 = i;
+        break;
+      }
+    }
+    if (nodeWithGene1 == -1) return ans;
+
+    // build graph
+    this.nums = nums;
+    for (int i = 0; i<n; ++i) {
+      graph.add(new ArrayList<>());
+    }
+    for (int i = 1; i<n; ++i) {
+      graph.get(parents[i]).add(i);
+    }
+
+    // invoke dfs first from node with gene value 1, then its parent,
+    // and so on till root
+    int curNode = nodeWithGene1;
+    int prevOnPath = -1;
+    int minMissingGene = 2;
+    while(curNode != -1) {
+      seen.set(nums[curNode]);
+      for (int child: graph.get(curNode)) {
+        if (child == prevOnPath) continue;
+        dfs(child);
+      }
+      while(seen.get(minMissingGene)) {
+        ++minMissingGene;
+      }
+      ans[curNode] = minMissingGene;
+      prevOnPath = curNode;
+      curNode = parents[curNode];
+    }
+    return ans;
+  }
+
+  void dfs(int root) {
+    seen.set(nums[root]);
+    for (int child: graph.get(root)) {
+      dfs(child);
+    }
+  }
+}
