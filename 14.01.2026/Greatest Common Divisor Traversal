@@ -1,0 +1,72 @@
+class Solution {
+
+    static class DSU {
+        int[] parent, rank;
+
+        DSU(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) parent[i] = i;
+        }
+
+        int find(int x) {
+            if (parent[x] != x)
+                parent[x] = find(parent[x]);
+            return parent[x];
+        }
+
+        void union(int a, int b) {
+            int pa = find(a);
+            int pb = find(b);
+            if (pa == pb) return;
+
+            if (rank[pa] < rank[pb]) {
+                parent[pa] = pb;
+            } else if (rank[pa] > rank[pb]) {
+                parent[pb] = pa;
+            } else {
+                parent[pb] = pa;
+                rank[pa]++;
+            }
+        }
+    }
+
+    public boolean canTraverseAllPairs(int[] nums) {
+        int n = nums.length;
+        if (n == 1) return true;
+
+        DSU dsu = new DSU(n);
+        Map<Integer, Integer> primeOwner = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            int x = nums[i];
+
+            for (int p = 2; p * p <= x; p++) {
+                if (x % p == 0) {
+                    if (primeOwner.containsKey(p)) {
+                        dsu.union(i, primeOwner.get(p));
+                    } else {
+                        primeOwner.put(p, i);
+                    }
+                    while (x % p == 0) x /= p;
+                }
+            }
+
+            // remaining prime factor
+            if (x > 1) {
+                if (primeOwner.containsKey(x)) {
+                    dsu.union(i, primeOwner.get(x));
+                } else {
+                    primeOwner.put(x, i);
+                }
+            }
+        }
+
+        int root = dsu.find(0);
+        for (int i = 1; i < n; i++) {
+            if (dsu.find(i) != root)
+                return false;
+        }
+        return true;
+    }
+}
