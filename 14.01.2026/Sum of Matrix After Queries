@@ -1,0 +1,28 @@
+class Solution {
+    public long matrixSumQueries(int n, int[][] q) {
+        boolean[] row = new boolean[n]; // mark rows that are deleted. true meas deleted
+        boolean[] col = new boolean[n]; // mark columns that are deleted. true meas deleted
+        int rowRemain = n; // count the number of rows that are not deleted
+        int colRemain = n; // count the number of columns that are not deleted
+        long ans = 0;
+        for (int i = q.length - 1; i >= 0; --i) {
+            int type = q[i][0], index = q[i][1], value = q[i][2];
+            if (type == 0) {
+                if (!row[index]) { // the row has not been deleted
+                    // only not deleted columns contribute to the final sum
+                    ans += value * colRemain;
+                    row[index] = true; // mark this row is deleted
+                    --rowRemain; // decrease the number of not deleted rows
+                }
+            } else {
+                if (!col[index]) { // the column has not been deleted
+                    // only not deleted rows contribute to the final sum
+                    ans += value * rowRemain;
+                    col[index] = true; // mark this column is deleted
+                    --colRemain; // decrease the number of not deleted columns
+                }
+            }
+        }
+        return ans;
+    }
+}
