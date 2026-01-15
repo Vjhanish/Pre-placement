@@ -1,0 +1,33 @@
+class Solution(object):
+    def maxIncreasingSubarrays(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        if len(nums) == 2:
+            return 1
+        
+        count = 1
+        lastcount = 0
+        maxm = 0
+        
+        for i in range(len(nums) - 1):
+            if nums[i] < nums[i + 1]:
+                count += 1
+            else:
+                # Update max with three possibilities:
+                # 1. Split current subarray in half
+                # 2. Pair previous and current subarrays
+                maxm = max(maxm, min(count, lastcount), count // 2)
+                lastcount = count
+                count = 1
+        
+        # Check the final subarray
+        if lastcount > 0:
+            maxm = max(maxm, min(lastcount, count), count // 2)
+        
+        # Handle case where entire array is strictly increasing
+        if count == len(nums):
+            return count // 2
+        
+        return maxm if maxm != 0 else 1
