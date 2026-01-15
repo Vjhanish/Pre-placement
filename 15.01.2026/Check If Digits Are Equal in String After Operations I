@@ -1,0 +1,18 @@
+class Solution(object):
+    def hasSameDigits(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        if len(s)<2:
+            return False
+        array = []
+        for i in s:
+            array.append(int(i))
+        while len(array) > 2:
+            temp = []
+            for i in range(len(array) - 1):
+                temp.append((array[i] + array[i+1]) % 10)
+            array = temp
+        return array[0] == array[1]
+            
