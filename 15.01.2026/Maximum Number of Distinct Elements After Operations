@@ -1,0 +1,34 @@
+class Solution(object):
+    def maxDistinctElements(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
+        # sort the array to process elements in order
+        nums.sort()
+        
+        # track the last value we assigned
+        last_used = float('-inf')
+        
+        # count distinct elements
+        distinct_count = 0
+        
+        # iterate through sorted array
+        for num in nums:
+            # calculate the range we can use for this element
+            min_val = num - k
+            max_val = num + k
+            
+            # we want to pick the smallest value that's greater than last_used
+            # to maximize future options
+            chosen = max(min_val, last_used + 1)
+            
+            # check if our chosen value is within valid range
+            if chosen <= max_val:
+                # we can use this value
+                distinct_count += 1
+                last_used = chosen
+            # if chosen > max_val, we can't make this element distinct
+        
+        return distinct_count
