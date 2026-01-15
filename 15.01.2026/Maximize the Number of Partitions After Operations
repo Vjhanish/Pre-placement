@@ -1,0 +1,50 @@
+class Solution:
+    def maxPartitionsAfterOperations(self, s, k):
+        n = len(s)
+        memo = {}
+        
+        def dp(pos, current_mask, changed):
+            # base case: if we reached end of string, no more partitions
+            if pos == n:
+                return 0
+            
+            # check if we already calculated this state
+            state = (pos, current_mask, changed)
+            if state in memo:
+                return memo[state]
+            
+            result = 0
+            char_idx = ord(s[pos]) - ord('a')  # convert char to index (0-25)
+            
+            # try keeping the current character
+            new_mask = current_mask | (1 << char_idx)  # add current char to mask
+            distinct_count = bin(new_mask).count('1')  # count how many distinct chars
+            
+            if distinct_count <= k:
+                # we can continue current partition
+                result = dp(pos + 1, new_mask, changed)
+            else:
+                # too many chars, start new partition
+                result = 1 + dp(pos + 1, 1 << char_idx, changed)
+            
+            # try changing current character if we haven't changed yet
+            if changed == 0:
+                for new_char_idx in range(26):  # try all 26 letters
+                    if new_char_idx != char_idx:
+                        new_mask_with_change = current_mask | (1 << new_char_idx)
+                        distinct_count_with_change = bin(new_mask_with_change).count('1')
+                        
+                        if distinct_count_with_change <= k:
+                            # continue partition with changed char
+                            result = max(result, dp(pos + 1, new_mask_with_change, 1))
+                        else:
+                            # start new partition with changed char
+                            result = max(result, 1 + dp(pos + 1, 1 << new_char_idx, 1))
+            
+            # save result for this state
+            memo[state] = result
+            return result
+        
+        # start from position 0, empty mask, no changes made
+        # add 1 because we count partition boundaries, not partitions
+        return dp(0, 0, 0) + 1
