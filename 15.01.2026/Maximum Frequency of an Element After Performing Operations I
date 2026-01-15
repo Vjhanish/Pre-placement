@@ -1,0 +1,31 @@
+from collections import Counter, defaultdict
+
+class Solution(object):
+    def maxFrequency(self, nums, k, numOperations):
+        """
+        :type nums: List[int]
+        :type k: int
+        :type numOperations: int
+        :rtype: int
+        """
+        freq = Counter(nums)
+        events = defaultdict(int)
+        for v in nums:
+            L = v - k
+            R = v + k
+            events[L] += 1
+            events[R + 1] -= 1
+
+        points = set(events.keys()) | set(freq.keys())
+        pts = sorted(points)
+
+        curr_cover = 0
+        res = 0
+        for x in pts:
+            curr_cover += events.get(x, 0)
+            already = freq.get(x, 0)
+            cand = min(curr_cover, already + numOperations)
+            if cand > res:
+                res = cand
+
+        return res
