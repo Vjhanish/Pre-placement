@@ -1,0 +1,15 @@
+class Solution(object):
+    def findSmallestInteger(self, nums, value):
+        """
+        :type nums: List[int]
+        :type value: int
+        :rtype: int
+        """
+        counts=[0]*value
+        for idx in range(len(nums)):
+            counts[nums[idx]%value]+=1
+        res=0
+        for num in range(value):
+            if counts[num]<counts[res]:
+                res=num
+        return value*counts[res]+res
