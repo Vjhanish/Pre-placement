@@ -1,0 +1,20 @@
+class Solution(object):
+    def maximumTotalDamage(self, power):
+        """
+        :type power: List[int]
+        :rtype: int
+        """
+        cnt = Counter(power)
+        vals = sorted(cnt)
+        l = len(vals)
+        gains = [v*cnt[v] for v in vals]
+        dp = [0] * l
+        p=-1
+
+        for i in range(l):
+            x = vals[i]
+            while(p+1<i and vals[p+1]<=x-3):
+                p+=1
+            take = gains[i] + (dp[p] if p>-1 else 0)
+            dp[i] = max(dp[i-1] if i>0 else 0,take)
+        return dp[-1]
